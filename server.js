@@ -12,6 +12,8 @@ const PORT = process.env.PORT || 3000
 // console.log(process.env)
 //CRUD 
 //CREATE/READ/UPDATE/DELETE
+//CR
+//UD
 //I/O
 
 var middleware = function(req, res, next){
@@ -27,12 +29,54 @@ var database = [
   {name:"Odie", age:4, breed:"pit", id:1234567}
 ]
 
+
+function addWeightToDog(req, res, next){
+  req.weight = 52
+  next()
+}
+
 app.use(middleware)
 
 app.get("/home", (req, res)=>{
   // console.log(req)
   res.sendFile(path.join(__dirname, 'index.html'))
 })
+
+app.post("/doginfo",(req, res)=>{
+  console.log(req)
+  req.body.id = Math.floor(100000 + Math.random() * 900000)
+  req.body.weight = req.weight
+  database.push(req.body)
+  res.json(database)
+})
+
+app.post("/doginfo", addWeightToDog ,(req, res)=>{
+  console.log(req)
+  req.body.id = Math.floor(100000 + Math.random() * 900000)
+  req.body.weight = req.weight
+  database.push(req.body)
+  res.json(database)
+})
+
+app.delete("/doginfo/:id", (req, res)=>{
+  console.log(req.params.id)
+  for (let i = 0; i < database.length; i++) {
+    if(req.params.id==database[i].id){
+      database.splice(i, 1)
+    }
+  }
+  res.json(database)
+})
+
+app.put("/doginfo/:id", (req, res)=>{
+  for (let i = 0; i < database.length; i++) {
+    if(req.params.id==database[i].id){
+      database[i].caretaker = req.body.caretaker
+    }
+  }
+  res.json(database)
+})
+
 
 app.get('/doginfo/:id', middleware, async function (req, res) {
   var selectedDog = {}
@@ -44,18 +88,14 @@ app.get('/doginfo/:id', middleware, async function (req, res) {
     console.log(dirtyData.main.temp)
     selectedDog.temp = dirtyData.main.temp
 
- 
   for (let i = 0; i < database.length; i++) {
     if(req.params.id==database[i].id){
       console.log("isnide info")
       selectedDog.dogData = database[i]
     }
   }
-
   res.json(selectedDog)
 })
-
-
 
 app.listen(PORT, ()=>{
     console.log("listening on port " + PORT)
