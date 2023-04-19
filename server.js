@@ -26,7 +26,8 @@ var database = [
   {name:"Runa", age:4, breed:"bulldog", id:1234},
   {name:"Hunter", age:6, breed:"yorkshire", id:12345},
   {name:"Skadi", age:2, breed:"bulldog", id:123456},
-  {name:"Odie", age:4, breed:"pit", id:1234567}
+  {name:"Odie", age:4, breed:"pit", id:1234567},
+  {name:"Buster", age:6, breed:"minpin", id:234567}
 ]
 
 
@@ -40,6 +41,11 @@ function addWeightToDog(req, res, next){
 app.get("/home", (req, res)=>{
   // console.log(req)
   res.sendFile(path.join(__dirname, 'index.html'))
+})
+
+app.get("/aboutus", (req, res)=>{
+  // console.log(req)
+  res.sendFile(path.join(__dirname, 'aboutus.html'))
 })
 
 app.get("/getalldogs", (req, res)=>{
