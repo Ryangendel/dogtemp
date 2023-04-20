@@ -19,7 +19,13 @@
     <input type="button" name="button" value="Click" onClick="testResults(this.form)">
   </form>
 
+  <h1>Click to have dog adopted</h1>
 <div id="search-results"></div>
+
+<h1>Click dog when they have a birthday</h1>
+<div id="update-dog-age"></div>
+
+
 
   <footer>
     <a href="/aboutus">about us</a>
@@ -59,7 +65,7 @@ function createClickEvents(){
   .then(data=>data.json())
   .then(cleanedData=>{
     for (let i = 0; i < cleanedData.length; i++) {
-      html = html + `<h3 id="${cleanedData[i].id}" class="dog">${cleanedData[i].name}</h3>`
+      html = html + `<h3 id="${cleanedData[i].id}" class="dog">${cleanedData[i].name} who is a breed of ${cleanedData[i].breed}</h3>`
     }
     document.getElementById("search-results").innerHTML += html
     createClickEvents()
