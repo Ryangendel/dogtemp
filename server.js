@@ -90,14 +90,10 @@ app.delete("/doginfo/:id", async (req, res)=>{
 //------------------------------
 //TODO: Write an API route that will recieve a request and add one year to the dogs age
 
-app.put("/doginfo/:id", (req, res)=>{
-  console.log(req.params.id)
-  for (let i = 0; i < database.length; i++) {
-    if(req.params.id==database[i].id){
-      database[i].age = database[i].age + 1
-    }
-  }
-  res.json(database)
+app.put("/doginfo/:id", async (req, res)=>{
+  const updateResult = await collection.updateOne({ _id: req.params.id }, { $inc: { age: +1 } });
+  console.log('Updated documents =>', updateResult);
+  res.json(updateResult)
 })
 //------------------------------
 //CRUD
