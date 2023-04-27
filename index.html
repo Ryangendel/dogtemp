@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -56,6 +56,11 @@ function createClickEvents(){
     });
   }
 }
+//CRD
+//UPDATE <= 
+//------------------------------
+//TODO: Write a function that makes a PUT(UPDATE) call to your server which updates the dog age
+//------------------------------
 
 
   function generateHTML(){
@@ -156,6 +161,221 @@ function createClickEvents(){
         document.getElementById("temp").innerHTML = result.temp
       })
       .catch(error => console.log('error', error));
+  </script>
+</body>
+
+</html> -->
+
+<!-- START KATES CODE -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+  <h1>Doggie Database</h1>
+  <div id="temp">HERE SHOULD BE OUR TEMPERATURE</div>
+  <form name="myForm" action="" method="POST">
+    Enter something in the box: <br>
+    <input type="text" name="inputbox" value="">
+    <input type="button" name="button" value="Click" onClick="testResults(this.form)">
+  </form>
+
+  <h1>Click to have dog adopted</h1>
+  <div id="search-results"></div>
+
+  <h1>Click dog when they have a birthday</h1>
+  <div id="update-dog-age"></div>
+
+
+
+  <footer>
+    <a href="/aboutus">about us</a>
+  </footer>
+  <script>
+
+function createClickEvents(){
+    // console.log(document.getElementsByClassName("dog"))
+    var dogs = document.getElementsByClassName("dog")
+
+    for (var i = 0; i < dogs.length; i++) {
+      console.log("MAKING A BUTTON")
+      dogs[i].addEventListener("click", function (e) {
+      console.log(e.target.id)
+
+      var requestOptions = {
+        method: 'DELETE',
+        redirect: 'follow'
+      };
+    
+
+      fetch(`/doginfo/${e.target.id}`, requestOptions)
+        .then(response => response.text())
+        .then(result => {
+          location.reload()
+          console.log(result)})
+        .catch(error => console.log('error', error));
+
+    });
+  }
+}
+
+//------------------------------
+//TODO: Write an API route that will recieve a request and add one year to the dogs age
+//------------------------------
+function ageClickEvents(){
+    var dogs = document.getElementsByClassName("dog")
+
+    for (var i = 0; i < dogs.length; i++) {
+      dogs[i].addEventListener("click", function (e) {
+      console.log(e.target.id)
+
+      var requestOptions = {
+        method: 'PUT',
+        redirect: 'follow'
+      };
+
+      fetch(`/doginfo/${e.target.id}`, requestOptions)
+        .then(response => response.text())
+        .then(result => {
+          location.reload()
+          console.log(result)})
+        .catch(error => console.log('error', error));
+
+    });
+  }
+}
+
+
+  function generateHTML(){
+    //<h3 id="1234" class="dog">runa</h3>
+  var html = ''
+  fetch("/getalldogs")
+  .then(data=>data.json())
+  .then(cleanedData=>{
+    for (let i = 0; i < cleanedData.length; i++) {
+      html = html + `<h3 id="${cleanedData[i].id}" class="dog">${cleanedData[i].name} who is a breed of ${cleanedData[i].breed}</h3>`
+    }
+    document.getElementById("search-results").innerHTML += html
+    createClickEvents()
+  })    
+  }
+
+  function ageGenerateHTML(){
+  var html = ''
+  fetch("/getalldogs")
+  .then(data=>data.json())
+  .then(cleanedData=>{
+    console.log("INSIDE AGEGENEATEHTML")
+    for (let i = 0; i < cleanedData.length; i++) {
+      html = html + `<h3 id="${cleanedData[i].id}" class="dog">${cleanedData[i].name} who is ${cleanedData[i].age} years old</h3>`
+    }
+    document.getElementById("update-dog-age").innerHTML += html
+    ageClickEvents()
+  })    
+  }
+
+  generateHTML()
+  ageGenerateHTML()
+    // })
+
+//-------------------
+
+    // function testResults(form) {
+    //   var inputValue = form.inputbox.value;
+
+    //   var myHeaders = new Headers();
+    //   myHeaders.append("Content-Type", "application/json");
+
+    //   var raw = JSON.stringify({
+    //     "name": form.inputbox.value
+    //   });
+
+    //   var requestOptions = {
+    //     method: 'POST',
+    //     headers: myHeaders,
+    //     body: raw,
+    //     redirect: 'follow'
+    //   };
+
+    //   fetch("/doginfo", requestOptions)
+    //     .then(response => response.text())
+    //     .then(result => console.log(result))
+    //     .catch(error => console.log('error', error));
+
+    // }
+
+    //----------------------------
+    // fetch("/doginfo/1234", {
+    //     method: "GET", // *GET, POST, PUT, DELETE, etc.
+    //     mode: "cors", // no-cors, *cors, same-origin
+    //     cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+    //     credentials: "same-origin", // include, *same-origin, omit
+    //     headers: {
+    //         "Content-Type": "application/json",
+    //         'Content-Type': 'application/x-www-form-urlencoded',
+    //     },
+    //     redirect: "follow", // manual, *follow, error
+    //     referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    //     body: JSON.stringify({social:545-87-7866, personName:"Erin", income:125000}), // body data type must match "Content-Type" header
+    // })
+    //     .then(data => {
+    //         console.log("---------")
+    //         console.log(data)
+    //         console.log("---------")
+    //         return data.json()
+    //     })
+    //     .then(data => {
+    //         console.log("inside fetch route")
+    //         console.log(data)
+    //     })
+
+    //         var myHeaders = new Headers();
+    // myHeaders.append("Content-Type",'application/x-www-form-urlencoded');
+
+    // var raw = JSON.stringify({
+    //   "data": {
+    //     "item_name": "dust ruffle",
+    //     "brand": "Ethan Allen",
+    //     "price": 75,
+    //     "color": "purple",
+    //     "description": "900 thread count dust ruffle"
+    //   }
+    // });
+
+function appendDogNameHTML(name){
+  document.getElementById("dogname").innerHTML = name;
+}
+
+    var requestOptions = {
+      method: 'GET',
+      //   headers: myHeaders,
+      // body: raw,
+      redirect: 'follow'
+    };
+
+    // //https://api.chucknorris.io/jokes/random
+    fetch("/doginfo/123456", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log("$$$$$$$$$$$$$$$-------")
+        console.log("----------")
+        console.log(result.temp)
+        console.log("----------")
+        
+        document.getElementById("temp").innerHTML = result.temp  
+        appendDogNameHTML(result.dogData.name)
+      })
+      .catch(error => console.log('error', error));
+
+//     error
+// TypeError: null is not an object (evaluating 'document.getElementById("dogname").innerHTML = result.dogData.name') — home:193
   </script>
 </body>
 

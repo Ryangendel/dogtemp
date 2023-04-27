@@ -3,6 +3,14 @@ const path = require("path")
 const app = express()
 require('dotenv').config()
 var bodyParser = require('body-parser');
+const { MongoClient, ObjectId } = require('mongodb');
+
+const url = process.env.MONGO_URI? process.env.MONGO_URI:'mongodb://localhost:27017';
+const client = new MongoClient(url);
+
+const dbName = 'dogs';
+const db = client.db(dbName);
+const collection = db.collection('gooddogs');
 
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -20,6 +28,17 @@ const PORT = process.env.PORT || 3000
 // console.log("inside middleware")
 //     next()
 
+// }
+
+
+// var DAL = {
+//   insertIntoUsers:function(data){
+//     database.insert({user:data})//Mongo Syntax
+//   }, 
+//   getAllUsers:function(user){
+//     database.find({})
+//     return data
+//   }
 // }
 
 var database = [
@@ -40,49 +59,49 @@ function addWeightToDog(req, res, next){
 
 app.get("/home", (req, res)=>{
   // console.log(req)
+  
   res.sendFile(path.join(__dirname, 'index.html'))
 })
+
 
 app.get("/aboutus", (req, res)=>{
   // console.log(req)
   res.sendFile(path.join(__dirname, 'aboutus.html'))
 })
 
-app.get("/getalldogs", (req, res)=>{
-  // console.log(req)
+  app.get("/getalldogs", async (req, res)=>{
+    // console.log(req)
+    await client.connect();
+    const findResult = await collection.find({}).toArray();
+    res.json(findResult)
+  })
+
+app.post("/doginfo",async (req, res)=>{
+  const insertResult = await collection.insertOne(req.body);
+  console.log('Inserted documents =>', insertResult);
   res.json(database)
 })
 
-app.post("/doginfo",(req, res)=>{
-  console.log(req)
-  req.body.id = Math.floor(100000 + Math.random() * 900000)
-  req.body.weight = req.weight
-  database.push(req.body)
+app.delete("/doginfo/:id", async (req, res)=>{
+  const deleteResult = await collection.deleteOne({ _id: new ObjectId(req.params.id)});
+  console.log('Deleted documents =>', deleteResult);
   res.json(database)
 })
+//------------------------------
+//TODO: Write an API route that will recieve a request and add one year to the dogs age
 
-app.post("/doginfo", addWeightToDog ,(req, res)=>{
-  console.log(req)
-  req.body.id = Math.floor(100000 + Math.random() * 900000)
-  req.body.weight = req.weight
-  database.push(req.body)
-  res.json(database)
-})
-
-app.delete("/doginfo/:id", (req, res)=>{
+app.put("/doginfo/:id", (req, res)=>{
   console.log(req.params.id)
   for (let i = 0; i < database.length; i++) {
     if(req.params.id==database[i].id){
-      database.splice(i, 1)
+      database[i].age = database[i].age + 1
     }
   }
   res.json(database)
 })
 //------------------------------
-//TODO: Write an API route that will recieve a request and add one year to the dogs age
-//------------------------------
-
-
+//CRUD
+//[{},{},{}]
 
 app.put("/doginfo/:id", (req, res)=>{
   // var database = [
@@ -113,13 +132,9 @@ app.get('/doginfo/:id', async function (req, res) {
     console.log(dirtyData.main.temp)
     selectedDog.temp = dirtyData.main.temp
 
-  for (let i = 0; i < database.length; i++) {
-    if(req.params.id==database[i].id){
-      console.log("isnide info")
-      selectedDog.dogData = database[i]
-    }
-  }
-  res.json(selectedDog)
+    await client.connect();
+    const findResult = await collection.find({_id: new ObjectId(req.params.id)}).toArray();
+    res.json(findResult)
 })
 
 app.listen(PORT, ()=>{
