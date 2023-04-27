@@ -5,7 +5,7 @@ require('dotenv').config()
 var bodyParser = require('body-parser');
 const { MongoClient, ObjectId } = require('mongodb');
 
-const url = process.env.MONGO_URI? process.env.MONGO_URI:'mongodb://localhost:27017';
+const url = "mongodb+srv://gendel.ryan%40gmail.com:P%40ssword!@cluster1.xupjqjl.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(url);
 
 const dbName = 'dogs';
