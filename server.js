@@ -119,20 +119,20 @@ app.put("/doginfo/:id", (req, res)=>{
 })
 
 
-app.get('/doginfo/:id', async function (req, res) {
-  var selectedDog = {}
+// app.get('/doginfo/:id', async function (req, res) {
+//   var selectedDog = {}
 
-  var data = await fetch("https://api.openweathermap.org/data/2.5/weather?lat=35.1065&lon=-106.6060&appid=6cba9d01ef70f28fac514fe4db61ef58")
-  var dirtyData = await data.json()
+//   var data = await fetch("https://api.openweathermap.org/data/2.5/weather?lat=35.1065&lon=-106.6060&appid=6cba9d01ef70f28fac514fe4db61ef58")
+//   var dirtyData = await data.json()
   
-    console.log("INSIDE API CALL Cleaned data below")
-    console.log(dirtyData.main.temp)
-    selectedDog.temp = dirtyData.main.temp
+//     console.log("INSIDE API CALL Cleaned data below")
+//     console.log(dirtyData.main.temp)
+//     selectedDog.temp = dirtyData.main.temp
 
-    await client.connect();
-    const findResult = await collection.find({_id: new ObjectId(req.params.id)}).toArray();
-    res.json(findResult)
-})
+//     await client.connect();
+//     const findResult = await collection.find({_id: new ObjectId(req.params.id)}).toArray();
+//     res.json(findResult)
+// })
 
 app.listen(PORT, ()=>{
     console.log("listening on port ::::::::::::::::::::::: " + PORT)
