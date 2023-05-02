@@ -3,14 +3,18 @@ const path = require("path")
 const app = express()
 require('dotenv').config()
 var bodyParser = require('body-parser');
-const { MongoClient, ObjectId } = require('mongodb');
+var db = require("./config/connection")
+var Dog = require("./models/Dogs")
 
-const url = "mongodb+srv://admin:Password@cluster1.xupjqjl.mongodb.net/?retryWrites=true&w=majority";
-const client = new MongoClient(url);
+// const { MongoClient, ObjectId } = require('mongodb');
 
-const dbName = 'dogs';
-const db = client.db(dbName);
-const collection = db.collection('gooddogs');
+//const url = process.env.MONGO_URI? "mongodb+srv://admin:Password@cluster1.xupjqjl.mongodb.net/?retryWrites=true&w=majority":"localhost:27017/dogs";
+// const url = 'mongodb://localhost:27017';
+// const client = new MongoClient(url);
+
+// const dbName = 'dogs';
+// const db = client.db(dbName);
+// const collection = db.collection('gooddogs');
 
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -71,20 +75,30 @@ app.get("/aboutus", (req, res)=>{
 
   app.get("/getalldogs", async (req, res)=>{
     // console.log(req)
-    await client.connect();
-    const findResult = await collection.find({}).toArray();
-    res.json(findResult)
+    // await client.connect();
+    // const findResult = await collection.find({}).toArray();
+    const leads = await Dog.find({});
+    res.send(leads);
   })
 
 app.post("/doginfo",async (req, res)=>{
   //logic here 
-  const insertResult = await collection.insertOne(req.body);
-  console.log('Inserted documents =>', insertResult);
+
+  const post = new Dog({
+    name:req.body.name,
+    caretaker:req.body.caretaker, 
+    adopted:req.body.adopted
+	})
+	await post.save()
+	res.send(post)
+  // const insertResult = await collection.insertOne(req.body);
+  // console.log('Inserted documents =>', insertResult);
   res.json(database)
 })
 
 app.delete("/doginfo/:id", async (req, res)=>{
-  const deleteResult = await collection.deleteOne({ _id: new ObjectId(req.params.id)});
+  //const id = mongoose.Types.ObjectId(req.params.id.trim());
+  const deleteResult = await collection.deleteOne({ _id: req.params.id.trim()});
   console.log('Deleted documents =>', deleteResult);
   res.json(database)
 })
